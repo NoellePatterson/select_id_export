@@ -27,7 +27,9 @@ FID
 
 # read only 'COMID' column of csv file
 # csv file for data extraction references
+# make sure all data columns are in 'General' format without commas or scientific notation
 comids = pd.read_csv('Data/sta_comid_join.csv', usecols=['COMID'])
+gageids = pd.read_csv('Data/sta_comid_join.csv', usecols=['USGS_GAGE'])
 
 ''' Data example
         COMID
@@ -40,21 +42,22 @@ comids = pd.read_csv('Data/sta_comid_join.csv', usecols=['COMID'])
 
 
 # convert to list to make it easier to iterate later
-ids = comids['COMID'].tolist()
+comids = comids['COMID'].tolist()
+gageids = gageids['USGS_GAGE'].tolist()
 ''' Data Example
 [10744456.0, 8922761.0, 20267023.0, 8915907.0, 8922715.0]
 '''
 # define select id rows from dataframe function
 
 
-def select_comid(df, comid):
+def select_comid(df, comids):
     # to do, save a csv with that df, and we can erase the return afer
-    comid_df = df.loc[df['COMID'] == comid]
+    comid_df = df.loc[df['COMID'] == id]
 
     return comid_df
 
-
 # loop ids to get each and save
-for id in ids:
-    id_df = select_comid(df, id)
-    id_df.to_csv('results/{}.csv'.format(id))
+for index, id in enumerate(comids):
+    id_df = select_comid(df, comids)
+    id_df = id_df[['year','WYT']]
+    id_df.to_csv('results/{}.csv'.format(gageids[index]), index = False)
